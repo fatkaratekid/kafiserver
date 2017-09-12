@@ -1,0 +1,2 @@
+heroku config -s > .env
+
