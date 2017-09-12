@@ -27,8 +27,9 @@ def push_message(message):
 
 @app.route('/')
 def api_root():
-    menu = 'Hoi! Kafi Server hier ^_^. Es ist schoen ois kanne z lärne.'
-    menu +='<br><br><a href="/desire">Say you that you want Kafi!</a>'
+    menu = 'Hoi! Kafi Server hier ^_^. Es ist schön ois kanne z\'lärne.'
+    menu +='<br><br><a href="/want">Say you that you want Kafi!</a>'
+    menu +='<br><br><a href="/brewing">Kafi is brewing...</a>'
     menu +='<br><br><a href="/done">Say that you made Kafi! (good guy you)</a>'
     menu += '<br><br>'
     return menu,200
