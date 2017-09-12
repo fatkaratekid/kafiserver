@@ -25,13 +25,25 @@ def push_message(message):
     pusher_client.trigger('kafi-channel', 'kafi-event', {'message': message})
 
 
+def nchar(n, c='&nbsp;'):
+    return n*c
+
+
 @app.route('/')
 def api_root():
-    menu = 'Hoi! Kafi Server hier ^_^. Es ist schön ois kanne z\'lärne.'
-    menu +='<br><br><a href="/want">Say you that you want Kafi!</a>'
-    menu +='<br><br><a href="/brewing">Kafi is brewing...</a>'
-    menu +='<br><br><a href="/done">Say that you made Kafi! (good guy you)</a>'
-    menu += '<br><br>'
+    menu  = '<p>'+nchar(17)+ nchar(31,'_')+ '<br>'
+    menu += nchar(15)+     '| Hoi! Kafi Server hier.' + nchar(15) + '|<br>'
+    menu += nchar(15)+     '| Es ist schön ois kanne z\'lärne. |<br>'
+    menu += nchar(15)+     '/   /``````````````````````````````<br>'
+    menu += nchar(13) +    '/ /<br>'
+    menu += nchar(12) +   '//<br>'
+    menu += nchar(8)  +'__/<br>'
+    menu += '^_^ ```<br><br><br><br></p>'
+    menu += '<p>How do you answer:'
+    menu += '<br><br><a href="/want">I want Kafi!</a>'
+    menu += '<br><br><a href="/brewing">Kafi is brewing...</a>'
+    menu += '<br><br><a href="/done">I "maked" Kafi! (good guy you)</a>'
+    menu += '</p>'
     return menu,200
 
 @app.route('/desire')
