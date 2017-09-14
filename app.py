@@ -3,10 +3,8 @@ import os
 from flask import Flask, url_for
 
 app = Flask(__name__)
-print(app)
 
 pusher_client = None
-print(os.environ)
 
 def init():
     global pusher_client
@@ -46,10 +44,10 @@ def api_root():
     menu += '</p>'
     return menu,200
 
+
 @app.route('/desire')
 @app.route('/want')
 def desire():
-    print('triggered desire')
     push_message('Ich will Kafi')
     return 'Longing for coffee - sent',200
 
@@ -70,7 +68,22 @@ def cooking():
 @app.route('/ping')
 def done():
     push_message('De Kafi isch parat')
-    return 'Done - sent',200
+    return 'Kafi is ready - sent',200
+
+
+@app.route('/merci')
+@app.route('/danke')
+@app.route('/thanks')
+def merci():
+    push_message('Merci')
+    return 'Merci - sent',200
+
+
+from flask import request
+from flask import jsonify
+@app.route("/ip", methods=["GET"])
+def get_my_ip():
+    return jsonify({'ip': request.remote_addr}), 200
 
 
 if __name__ == '__main__':
