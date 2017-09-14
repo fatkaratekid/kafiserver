@@ -41,6 +41,7 @@ def api_root():
     menu += '<br><br><a href="/want">I want Kafi!</a>'
     menu += '<br><br><a href="/brewing">Kafi is brewing...</a>'
     menu += '<br><br><a href="/done">I "maked" Kafi! (good guy you)</a>'
+    menu += '<br><br><a href="/merci">Sag merci</a>'
     menu += '</p>'
     return menu,200
 
