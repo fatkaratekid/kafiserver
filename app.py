@@ -3,10 +3,8 @@ import os
 from flask import Flask, url_for, render_template
 
 app = Flask(__name__)
-print(app)
 
 pusher_client = None
-print(os.environ)
 
 def init():
     global pusher_client
@@ -31,6 +29,7 @@ def nchar(n, c='&nbsp;'):
 
 @app.route('/')
 def api_root():
+<<<<<<< HEAD
     # menu  = '<p>'+nchar(17)+ nchar(31,'_')+ '<br>'
     # menu += nchar(15)+     '| Hoi! Kafi Server da.' + nchar(17) + '|<br>'
     # menu += nchar(15)+     '| Es ist schön ois kanne z\'lärne. |<br>'
@@ -46,11 +45,28 @@ def api_root():
     # menu += '</p>'
     return render_template('layout.html'),200
 
+=======
+    menu  = '<p>'+nchar(17)+ nchar(31,'_')+ '<br>'
+    menu += nchar(15)+     '| Hoi! Kafi Server hier.' + nchar(15) + '|<br>'
+    menu += nchar(15)+     '| Es ist schön ois kanne z\'lärne. |<br>'
+    menu += nchar(15)+     '/   /``````````````````````````````<br>'
+    menu += nchar(13) +    '/ /<br>'
+    menu += nchar(12) +   '//<br>'
+    menu += nchar(8)  +'__/<br>'
+    menu += '^_^ ```<br><br><br><br></p>'
+    menu += '<p>How do you answer:'
+    menu += '<br><br><a href="/want">I want Kafi!</a>'
+    menu += '<br><br><a href="/brewing">Kafi is brewing...</a>'
+    menu += '<br><br><a href="/done">I "maked" Kafi! (good guy you)</a>'
+    menu += '<br><br><a href="/merci">Sag merci</a>'
+    menu += '</p>'
+    return menu,200
+>>>>>>> 2346ed7fed13252cbe946bcf8c510d8a899b8fd7
+
 
 @app.route('/desire')
 @app.route('/want')
 def desire():
-    print('triggered desire')
     push_message('Ich will Kafi')
     return 'Longing for coffee - sent',200
 
@@ -71,7 +87,22 @@ def cooking():
 @app.route('/ping')
 def done():
     push_message('De Kafi isch parat')
-    return 'Done - sent',200
+    return 'Kafi is ready - sent',200
+
+
+@app.route('/merci')
+@app.route('/danke')
+@app.route('/thanks')
+def merci():
+    push_message('Merci')
+    return 'Merci - sent',200
+
+
+from flask import request
+from flask import jsonify
+@app.route("/ip", methods=["GET"])
+def get_my_ip():
+    return jsonify({'ip': request.remote_addr}), 200
 
 
 if __name__ == '__main__':
