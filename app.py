@@ -1,6 +1,6 @@
 import pusher
 import os
-from flask import Flask, url_for
+from flask import Flask, url_for, render_template
 
 app = Flask(__name__)
 print(app)
@@ -31,20 +31,21 @@ def nchar(n, c='&nbsp;'):
 
 @app.route('/')
 def api_root():
-    menu  = '<p>'+nchar(17)+ nchar(31,'_')+ '<br>'
-    menu += nchar(15)+     '| Hoi! Kafi Server hier.' + nchar(15) + '|<br>'
-    menu += nchar(15)+     '| Es ist schön ois kanne z\'lärne. |<br>'
-    menu += nchar(15)+     '/   /``````````````````````````````<br>'
-    menu += nchar(13) +    '/ /<br>'
-    menu += nchar(12) +   '//<br>'
-    menu += nchar(8)  +'__/<br>'
-    menu += '^_^ ```<br><br><br><br></p>'
-    menu += '<p>How do you answer:'
-    menu += '<br><br><a href="/want">I want Kafi!</a>'
-    menu += '<br><br><a href="/brewing">Kafi is brewing...</a>'
-    menu += '<br><br><a href="/done">I "maked" Kafi! (good guy you)</a>'
-    menu += '</p>'
-    return menu,200
+    # menu  = '<p>'+nchar(17)+ nchar(31,'_')+ '<br>'
+    # menu += nchar(15)+     '| Hoi! Kafi Server da.' + nchar(17) + '|<br>'
+    # menu += nchar(15)+     '| Es ist schön ois kanne z\'lärne. |<br>'
+    # menu += nchar(15)+     '/   /``````````````````````````````<br>'
+    # menu += nchar(13) +    '/ /<br>'
+    # menu += nchar(12) +   '//<br>'
+    # menu += nchar(8)  +'__/<br>'
+    # menu += '^_^ ```<br><br><br><br></p>'
+    # menu += '<p>How do you answer:'
+    # menu += '<br><br><a href="/want">I want Kafi!</a>'
+    # menu += '<br><br><a href="/brewing">Kafi is brewing...</a>'
+    # menu += '<br><br><a href="/done">I "maked" Kafi! (good guy you)</a>'
+    # menu += '</p>'
+    return render_template('layout.html'),200
+
 
 @app.route('/desire')
 @app.route('/want')
