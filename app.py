@@ -23,52 +23,16 @@ def push_message(message):
     pusher_client.trigger('kafi-channel', 'kafi-event', {'message': message})
 
 
-def nchar(n, c='&nbsp;'):
-    return n*c
-
-
 @app.route('/')
 def api_root():
-<<<<<<< HEAD
-    # menu  = '<p>'+nchar(17)+ nchar(31,'_')+ '<br>'
-    # menu += nchar(15)+     '| Hoi! Kafi Server da.' + nchar(17) + '|<br>'
-    # menu += nchar(15)+     '| Es ist schön ois kanne z\'lärne. |<br>'
-    # menu += nchar(15)+     '/   /``````````````````````````````<br>'
-    # menu += nchar(13) +    '/ /<br>'
-    # menu += nchar(12) +   '//<br>'
-    # menu += nchar(8)  +'__/<br>'
-    # menu += '^_^ ```<br><br><br><br></p>'
-    # menu += '<p>How do you answer:'
-    # menu += '<br><br><a href="/want">I want Kafi!</a>'
-    # menu += '<br><br><a href="/brewing">Kafi is brewing...</a>'
-    # menu += '<br><br><a href="/done">I "maked" Kafi! (good guy you)</a>'
-    # menu += '</p>'
     return render_template('layout.html'),200
-
-=======
-    menu  = '<p>'+nchar(17)+ nchar(31,'_')+ '<br>'
-    menu += nchar(15)+     '| Hoi! Kafi Server hier.' + nchar(15) + '|<br>'
-    menu += nchar(15)+     '| Es ist schön ois kanne z\'lärne. |<br>'
-    menu += nchar(15)+     '/   /``````````````````````````````<br>'
-    menu += nchar(13) +    '/ /<br>'
-    menu += nchar(12) +   '//<br>'
-    menu += nchar(8)  +'__/<br>'
-    menu += '^_^ ```<br><br><br><br></p>'
-    menu += '<p>How do you answer:'
-    menu += '<br><br><a href="/want">I want Kafi!</a>'
-    menu += '<br><br><a href="/brewing">Kafi is brewing...</a>'
-    menu += '<br><br><a href="/done">I "maked" Kafi! (good guy you)</a>'
-    menu += '<br><br><a href="/merci">Sag merci</a>'
-    menu += '</p>'
-    return menu,200
->>>>>>> 2346ed7fed13252cbe946bcf8c510d8a899b8fd7
 
 
 @app.route('/desire')
 @app.route('/want')
 def desire():
     push_message('Ich will Kafi')
-    return 'Longing for coffee - sent',200
+    return render_template('redirector.html', message='Longing for coffee')
 
 
 @app.route('/cooking')
@@ -76,7 +40,7 @@ def desire():
 @app.route('/making')
 def cooking():
     push_message('Ich mache de Kafi parat')
-    return 'I am cooking it - sent',200
+    return render_template('redirector.html', message='I am cooking it')
 
 
 @app.route('/done')
@@ -87,7 +51,7 @@ def cooking():
 @app.route('/ping')
 def done():
     push_message('De Kafi isch parat')
-    return 'Kafi is ready - sent',200
+    return render_template('redirector.html', message='Kafi is ready')
 
 
 @app.route('/merci')
@@ -95,7 +59,7 @@ def done():
 @app.route('/thanks')
 def merci():
     push_message('Merci')
-    return 'Merci - sent',200
+    return render_template('redirector.html', message='merci')
 
 
 from flask import request
