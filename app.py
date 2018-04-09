@@ -1,10 +1,14 @@
 import pusher
 import os
 from flask import Flask, url_for, render_template
+from flask import request
+from flask import jsonify
+import menu
 
 app = Flask(__name__)
 
 pusher_client = None
+
 
 def init():
     global pusher_client
@@ -25,7 +29,9 @@ def push_message(message):
 
 @app.route('/')
 def api_root():
-    return render_template('layout.html'),200
+    url = 'https://www.unispital-basel.ch/das-universitaetsspital/bereiche/personal-betrieb/hotellerie/restauration/centro-centrino/'
+    menus = menu.get_menus(url)
+    return render_template('layout.html', menus=menus), 200
 
 
 @app.route('/desire')
@@ -62,8 +68,6 @@ def merci():
     return render_template('redirector.html', message='merci')
 
 
-from flask import request
-from flask import jsonify
 @app.route("/ip", methods=["GET"])
 def get_my_ip():
     return jsonify({'ip': request.remote_addr}), 200

@@ -27,4 +27,30 @@
   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;__/
   <br>^_^ ```
   <br><br><br><br></p>
-<p>How do you answer:<br><br><a href="/want">I want Kafi!</a><br><br><a href="/brewing">Kafi is brewing...</a><br><br><a href="/done">I "maked" Kafi! (good guy you)</a><br><br><a href="/merci">Sag merci</a></p>
+<p>How do you answer:
+    <br><br>
+    <a href="/want">I want Kafi!</a>
+    <br><br>
+    <a href="/brewing">Kafi is brewing...</a>
+    <br><br>
+    <a href="/done">I "maked" Kafi! (good guy you)</a>
+    <br><br>
+    <a href="/merci">Sag merci</a>
+</p>
+<br>
+-------------------------------------------------------
+<br>
+<p>
+    Hungry?
+
+    Here are today's menus:
+    {% for menu in menus %}
+        <br>
+        <p> Menu {{  loop.index }}:
+        {% for item in menu %}
+            <br>
+            <li>{{ item }}</li>
+        {% endfor %}
+        </p>
+    {% endfor %}
+</p>
