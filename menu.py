@@ -2,7 +2,7 @@ from urllib import request
 from bs4 import BeautifulSoup as soup
 from urllib.parse import urljoin
 from datetime import date
-import textract
+from pdf2text import convert_pdf_to_txt
 import tempfile
 import re
 
@@ -30,6 +30,10 @@ def _is_menu_file(link, current_week):
     )
 
 
+def get_image(image_description):
+    raise NotImplementedError
+
+
 def get_menus(base_url):
     current_week = date.today().isocalendar()[1]
     current_day_idx = date.today().weekday()
@@ -55,15 +59,11 @@ def get_menus(base_url):
                 content.status == 200
                 and content_type == 'application/pdf'
         )
-        if is_pdf:
 
+        if is_pdf:
             with tempfile.NamedTemporaryFile() as f:
                 f.write(content.read())
-
-                text = str(
-                    textract.process(f.name, extension='pdf', encoding='utf8'),
-                    'utf-8'
-                )
+                text = convert_pdf_to_txt(f.name)
 
             menus_on_pdf = regex_menu_type.split(text)[1:]
 
