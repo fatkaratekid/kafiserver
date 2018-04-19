@@ -29,7 +29,7 @@ def push_message(message):
 
 @app.route('/')
 def api_root():
-    url = 'https://www.unispital-basel.ch/das-universitaetsspital/bereiche/personal-betrieb/hotellerie/restauration/centro-centrino/'
+    url = os.environ['MENUS_URL']
     menus = menu.get_menus(url)
     return render_template('layout.html', menus=menus), 200
 
@@ -76,4 +76,4 @@ def get_my_ip():
 if __name__ == '__main__':
     print('Running server now')
     init()
-    app.run()
+    app.run(debug=True)

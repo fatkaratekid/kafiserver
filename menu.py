@@ -5,6 +5,22 @@ from datetime import date
 from pdf2text import convert_pdf_to_txt
 import tempfile
 import re
+import redis
+import os
+
+
+def init_redis():
+    global r
+    r = redis.Redis.from_url(
+        redis_url,
+        charset="utf-8",
+        decode_responses=True
+    )
+
+
+r = None
+redis_url = os.environ['REDIS_URL']
+init_redis()
 
 
 def get_page(base_url):
@@ -34,9 +50,40 @@ def get_image(image_description):
     raise NotImplementedError
 
 
+def check_redis_conenction():
+    try:
+        r.ping()
+    except redis.ConnectionError:
+        init_redis()
+
+
+def set_menus_from_db(menus_key, menus_today):
+    try:
+        return r.set(menus_key, menus_today)
+    except:
+        check_redis_conenction()
+        return r.set(menus_key, menus_today)
+
+
+def get_menus_from_db(menus_key):
+    try:
+        return eval(r.get(menus_key))
+    except:
+        check_redis_conenction()
+        return eval(r.get(menus_key))
+
+
 def get_menus(base_url):
+
     current_week = date.today().isocalendar()[1]
     current_day_idx = date.today().weekday()
+
+    menus_key = '{}_{}'.format(current_week, current_day_idx)
+
+    menus_today = get_menus_from_db(menus_key)
+
+    if menus_today:
+        return menus_today
 
     html = get_page(base_url)
     links = get_all_links(html)
@@ -77,5 +124,7 @@ def get_menus(base_url):
             )
     if not menus_today:
         raise Exception('No pdfs found on the page')
+
+    set_menus_from_db(menus_key, menus_today)
 
     return menus_today
