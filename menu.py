@@ -58,19 +58,16 @@ def check_redis_conenction():
 
 
 def set_menus_from_db(menus_key, menus_today):
-    try:
-        return r.set(menus_key, menus_today)
-    except:
-        check_redis_conenction()
-        return r.set(menus_key, menus_today)
+    check_redis_conenction()
+    return r.set(menus_key, menus_today)
 
 
 def get_menus_from_db(menus_key):
-    try:
-        return eval(r.get(menus_key))
-    except:
-        check_redis_conenction()
-        return eval(r.get(menus_key))
+    check_redis_conenction()
+    menus_raw = r.get(menus_key)
+    if menus_raw is None:
+        return None
+    return eval(menus_raw)
 
 
 def get_menus(base_url):
@@ -82,7 +79,7 @@ def get_menus(base_url):
 
     menus_today = get_menus_from_db(menus_key)
 
-    if menus_today:
+    if menus_today is not None:
         return menus_today
 
     html = get_page(base_url)
