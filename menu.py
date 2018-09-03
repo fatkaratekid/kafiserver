@@ -7,7 +7,7 @@ import tempfile
 import re
 import redis
 import os
-
+from urllib.error import HTTPError
 
 def init_redis():
     global r
@@ -24,10 +24,13 @@ init_redis()
 
 
 def get_page(base_url):
-    req = request.urlopen(base_url)
+    try:
+        req = request.urlopen(base_url)
+    except HTTPError:
+        return None
     if req.code == 200:
         return req.read()
-    raise Exception('Error {0}'.format(req.status_code))
+    raise ValueError('Error {0}'.format(req.status_code))
 
 
 def get_all_links(html):
@@ -83,9 +86,11 @@ def get_menus(base_url):
         return menus_today
 
     html = get_page(base_url)
+    if html is None:
+        return [['menu page does not exist']]
     links = get_all_links(html)
     if len(links) == 0:
-        raise Exception('No links found on the webpage')
+        return [['no menu PDF links found on the menu page']]
 
     regex_menu_type = re.compile('Woche [0-9]+')
     regex_day = re.compile(
@@ -120,7 +125,7 @@ def get_menus(base_url):
                 ]
             )
     if not menus_today:
-        raise Exception('No pdfs found on the page')
+        return [['no correctly named PDFs found on found links']]
 
     set_menus_from_db(menus_key, menus_today)
 
