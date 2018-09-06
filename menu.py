@@ -2,7 +2,7 @@ from urllib import request
 from bs4 import BeautifulSoup as soup
 from urllib.parse import urljoin
 from datetime import date
-from pdf2text import convert_pdf_to_txt
+from pdf2text import convert_pdf_to_text
 import tempfile
 import re
 import redis
@@ -41,11 +41,16 @@ def get_all_links(html):
 
 def _is_menu_file(link, current_week):
     file_name = link.rsplit('/', 1)[-1]
+
+    import sys
+    print('link: ', link, file=sys.stdout)
+    sys.stdout.flush()
+
     return (
             link[-4:] == '.pdf'
-            and 'centro_menues' in link.lower()
-            and str(current_week) in file_name
-            and 'menu' in file_name.lower()
+            # and 'centro_menues' in link.lower()
+            # and str(current_week) in file_name
+            and 'menus' in file_name.lower()
     )
 
 
@@ -109,10 +114,20 @@ def get_menus(base_url):
                 and content_type == 'application/pdf'
         )
 
+        import sys
+        print(is_pdf, file=sys.stdout)
+        sys.stdout.flush()
+
         if is_pdf:
+            print('it is pdf, we are parsing now', is_pdf, file=sys.stdout)
+            sys.stdout.flush()
+
             with tempfile.NamedTemporaryFile() as f:
                 f.write(content.read())
-                text = convert_pdf_to_txt(f.name)
+                text = convert_pdf_to_text(f.name)
+
+            print('here is text: ', text, file=sys.stdout)
+            sys.stdout.flush()
 
             menus_on_pdf = regex_menu_type.split(text)[1:]
 
@@ -125,7 +140,7 @@ def get_menus(base_url):
                 ]
             )
     if not menus_today:
-        return [['no correctly named PDFs found on found links']]
+        return [['none of the PDFs contain correct info or no correct PDFs found']]
 
     set_menus_from_db(menus_key, menus_today)
 
