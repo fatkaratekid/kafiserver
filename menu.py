@@ -8,6 +8,8 @@ import re
 import redis
 import os
 from urllib.error import HTTPError
+import sys
+
 
 def init_redis():
     global r
@@ -42,15 +44,13 @@ def get_all_links(html):
 def _is_menu_file(link, current_week):
     file_name = link.rsplit('/', 1)[-1]
 
-    import sys
     print('link: ', link, file=sys.stdout)
     sys.stdout.flush()
 
     return (
             link[-4:] == '.pdf'
-            # and 'centro_menues' in link.lower()
-            # and str(current_week) in file_name
-            and 'menus' in file_name.lower()
+            and str(current_week) in file_name
+            and '_menu' in file_name.lower()
     )
 
 
@@ -78,17 +78,17 @@ def get_menus_from_db(menus_key):
     return eval(menus_raw)
 
 
-def get_menus(base_url):
+def get_menus(base_url, menu_format='text'):
 
     current_week = date.today().isocalendar()[1]
     current_day_idx = date.today().weekday()
 
     menus_key = '{}_{}'.format(current_week, current_day_idx)
 
-    menus_today = get_menus_from_db(menus_key)
-
-    if menus_today is not None:
-        return menus_today
+    if menu_format == 'text':
+        menus_today = get_menus_from_db(menus_key)
+        if menus_today is not None:
+            return menus_today
 
     html = get_page(base_url)
     if html is None:
@@ -102,11 +102,16 @@ def get_menus(base_url):
         '[A-Z]{1}[a-z]+, [0-9]{2}\. [A-Z]{1}[a-z]+ 20[0-9]{2}'
     )
 
-    menus_today = []
-    for link in links:
-        if not _is_menu_file(link['href'], current_week):
-            continue
+    menu_links = [
+        l for l in links
+        if _is_menu_file(l['href'], current_week)
+    ]
 
+    if menu_format == 'url':
+        return [menu_links]
+
+    menus_today = []
+    for link in menu_links:
         content = request.urlopen(urljoin(base_url, link['href']))
         content_type = content.headers['content-type']
         is_pdf = (
@@ -114,7 +119,6 @@ def get_menus(base_url):
                 and content_type == 'application/pdf'
         )
 
-        import sys
         print(is_pdf, file=sys.stdout)
         sys.stdout.flush()
 
@@ -145,3 +149,4 @@ def get_menus(base_url):
     set_menus_from_db(menus_key, menus_today)
 
     return menus_today
+

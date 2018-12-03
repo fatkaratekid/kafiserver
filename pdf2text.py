@@ -72,7 +72,7 @@ def convert_scanned_pdf_to_image(filepdf):
 
 
 def ocr(path):
-    print('and now OCR')
+    print('and now OCR pipeline')
 
     print('reading')
     image = cv2.imread(path)
@@ -93,11 +93,12 @@ def ocr(path):
     cv2.imwrite(filename, gray)
 
     #get text
-    print('text from file')
+    print('ocr')
     with Image.open(filename) as menu_img:
+
         text = pytesseract.image_to_string(menu_img)
         os.remove(filename)
-    print(text)
+    print('returning text')
     return text
 
 

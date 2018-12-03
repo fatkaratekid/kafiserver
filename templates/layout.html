@@ -17,7 +17,15 @@
       alert(data.message);
     });
   </script>
+    <style>
+        ul {
+            columns: 1;
+            -webkit-columns: 1;
+            -moz-columns: 1;
+        }
+    </style>
 </head>
+
 <p>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ________________________
   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| Hoi! Kafi Server hier. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
@@ -26,31 +34,33 @@
   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / /<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//
   <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;__/
   <br>^_^ ```
-  <br><br><br><br></p>
-<p>How do you answer:
-    <br><br>
-    <a href="/want">I want Kafi!</a>
-    <br><br>
-    <a href="/brewing">Kafi is brewing...</a>
-    <br><br>
-    <a href="/done">I "maked" Kafi! (good guy you)</a>
-    <br><br>
-    <a href="/merci">Sag merci</a>
+  <br><br><br><br>
 </p>
-<br>
--------------------------------------------------------
-<br>
 <p>
-    Hungry?
+How do you answer:
+<ul>
+    <li><a href="/want">I want Kafi!</a></li>
+    <li><a href="/brewing">Kafi is brewing...</a></li>
+    <li><a href="/done">I "maked" Kafi! (good guy you)</a></li>
+    <li><a href="/merci">Sag merci</a></li>
+</ul>
+</p>
+-------------------------------------------------------
+<p>
+Hungry? Here are today's menus:
+<div class="columwrapper">
+{%- for menu in menus %}
 
-    Here are today's menus:
-    {% for menu in menus %}
-        <br>
-        <p> Menu {{  loop.index }}:
-        {% for item in menu %}
-            <br>
+    <ul class="column-{{ loop.index }}">
+        Menu {{  loop.index }}
+        {%- for item in menu %}
             <li>{{ item }}</li>
-        {% endfor %}
-        </p>
-    {% endfor %}
+        {%- endfor %}
+    </ul>
+{%- endfor %}
+</div>
+</p>
+-------------------------------------------------------
+<p>
+Breaking News: {{  news }}
 </p>

@@ -4,6 +4,7 @@ from flask import Flask, url_for, render_template
 from flask import request
 from flask import jsonify
 import menu
+from news import random_medical_news
 
 app = Flask(__name__)
 
@@ -30,8 +31,12 @@ def push_message(message):
 @app.route('/')
 def api_root():
     url = os.environ['MENUS_URL']
-    menus = menu.get_menus(url)
-    return render_template('layout.html', menus=menus), 200
+    menus = menu.get_menus(url, 'text')
+    return render_template(
+        'layout.html',
+        menus=menus,
+        news=random_medical_news()
+    ), 200
 
 
 @app.route('/desire')
