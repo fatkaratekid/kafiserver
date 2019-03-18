@@ -78,6 +78,16 @@ def get_menus_from_db(menus_key):
     return eval(menus_raw)
 
 
+def get_pattern_text_to_menus():
+    re1 = '((?:Montag|Dienstag|Mittwoch|Donnerstag|Freitag))'  # Day Of Week 1
+    re2 = '.*?'  # Non-greedy match on filler
+    re3 = '((?:Jan(?:uar)?|Feb(?:ruar)?|Mär(?:z)?|Apr(?:il)?|Mai|Jun(?:i)?|Jul(?:i)?|Aug(?:ust)?|Sep(?:tember)?|Sept|Okt(?:ober)?|Nov(?:ember)?|Dez(?:ember)?))'  # Month 1
+    re4 = '.*?'  # Non-greedy match on filler
+    re5 = '20[0-9]{2}'  # Year 1
+
+    return re.compile(re1 + re4 + re5, re.IGNORECASE)
+
+
 def get_menus(base_url, menu_format='text'):
 
     current_week = date.today().isocalendar()[1]
@@ -99,8 +109,9 @@ def get_menus(base_url, menu_format='text'):
 
     regex_menu_type = re.compile('Woche [0-9]+')
     regex_day = re.compile(
-        '[A-Z]{1}[a-z]+, [0-9]{2}\. [A-Z]{1}[a-z]+ 20[0-9]{2}'
+        '[A-Z]{1}[a-z]+,[ ]*[0-9]{2}.[ ]*[A-Z]{1}[äa-z]+ 20[0-9]{2}'
     )
+    # regex_day = get_pattern_text_to_menus()
 
     menu_links = [
         l for l in links
@@ -112,6 +123,7 @@ def get_menus(base_url, menu_format='text'):
 
     menus_today = []
     for link in menu_links:
+        print('openming url', urljoin(base_url, link['href']))
         content = request.urlopen(urljoin(base_url, link['href']))
         content_type = content.headers['content-type']
         is_pdf = (
@@ -128,7 +140,9 @@ def get_menus(base_url, menu_format='text'):
 
             with tempfile.NamedTemporaryFile() as f:
                 f.write(content.read())
-                text = convert_pdf_to_text(f.name)
+                text = convert_pdf_to_text(f.name).strip()
+
+            text = re.sub('[^A-Za-z0-9 \nöäüéàè&ÖÄÜÉÀÈ\-,.!?_\'"|]+', '', text)
 
             print('here is text: ', text, file=sys.stdout)
             sys.stdout.flush()
@@ -137,7 +151,9 @@ def get_menus(base_url, menu_format='text'):
 
             menus_today.extend(
                 [
-                    regex_day.split(repr(m))[current_day_idx+1]
+                    regex_day.split(
+                        repr(m.strip())
+                    )[current_day_idx+1]
                     .replace('\\n', '')
                     .split('|')
                     for m in menus_on_pdf
