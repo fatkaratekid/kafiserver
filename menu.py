@@ -9,7 +9,7 @@ import redis
 import os
 from urllib.error import HTTPError
 import sys
-
+from flask import Markup
 
 def init_redis():
     global r
@@ -122,6 +122,7 @@ def get_menus(base_url, menu_format='text'):
         return [menu_links]
 
     menus_today = []
+    pdf_links = []
     for link in menu_links:
         print('openming url', urljoin(base_url, link['href']))
         content = request.urlopen(urljoin(base_url, link['href']))
@@ -135,8 +136,14 @@ def get_menus(base_url, menu_format='text'):
         sys.stdout.flush()
 
         if is_pdf:
-            print('it is pdf, we are parsing now', is_pdf, file=sys.stdout)
-            sys.stdout.flush()
+            # print('it is pdf, we are parsing now', is_pdf, file=sys.stdout)
+            # sys.stdout.flush()
+            current_pdf_html_link = Markup(
+                    f'<a href="'
+                    f'{urljoin(base_url, link["href"])}'
+                    f'">link</a>'
+                )
+            pdf_links.append(current_pdf_html_link)
 
             with tempfile.NamedTemporaryFile() as f:
                 f.write(content.read())
@@ -144,23 +151,35 @@ def get_menus(base_url, menu_format='text'):
 
             text = re.sub('[^A-Za-z0-9 \nöäüéàè&ÖÄÜÉÀÈ\-,.!?_\'"|]+', '', text)
 
-            print('here is text: ', text, file=sys.stdout)
-            sys.stdout.flush()
+            # print('here is text: ', text, file=sys.stdout)
+            # sys.stdout.flush()
 
             menus_on_pdf = regex_menu_type.split(text)[1:]
+            # if menus_on_pdf
+            identified_days = [regex_day.findall(repr(m.strip())) for m in menus_on_pdf]
+            current_day_inidices = [
+                idx
+                for menu_days in identified_days
+                for idx, day in enumerate(menu_days)
+                if f'{date.today().day}.' in day
+            ]
 
-            menus_today.extend(
-                [
-                    regex_day.split(
-                        repr(m.strip())
-                    )[current_day_idx+1]
-                    .replace('\\n', '')
-                    .split('|')
-                    for m in menus_on_pdf
-                ]
-            )
+            try:
+                menus_today.extend(
+                    [
+                            regex_day.split(
+                                repr(m.strip())
+                            )[current_day_idx + 1]
+                            .replace('\\n', '')
+                            .split('|')
+
+                        for current_day_idx, m in zip(current_day_inidices, menus_on_pdf)
+                    ]
+                )
+            except:
+                pass
     if not menus_today:
-        return [['none of the PDFs contain correct info or no correct PDFs found']]
+        return [['Something went wrong, sorry, please check tomorrow. Try the pdfs'], pdf_links]
 
     set_menus_from_db(menus_key, menus_today)
 

@@ -77,8 +77,8 @@ def merci():
 def get_my_ip():
     return jsonify({'ip': request.remote_addr}), 200
 
-
-if __name__ == '__main__':
-    print('Running server now')
-    init()
-    app.run(debug=True)
+#
+# if __name__ == '__main__':
+#     print('Running server now')
+#     init()
+#     app.run(debug=True)
