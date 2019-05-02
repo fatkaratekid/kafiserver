@@ -13,7 +13,7 @@ Jinja2==2.10
 MarkupSafe==1.0
 ndg-httpsclient==0.5.1
 numpy==1.15.1
-opencv-python==3.4.2.17
+opencv-python==4.1.0.25
 PasteDeploy==1.5.2
 pdfminer.six==20170720
 Pillow==5.2.0

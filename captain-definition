@@ -1,0 +1,16 @@
+{
+    "schemaVersion": 2,
+    "dockerfileLines": [
+        "FROM python:3.7.3-slim-stretch",
+        "COPY . /app",
+		"WORKDIR /app",
+		"RUN ls -a",
+		"RUN apt update && apt install -y libsm6 libxrender1 libfontconfig1 libice6 libmagickwand-dev",
+		"RUN pip install --upgrade pip",
+		"RUN pip search opencv-python",
+		"RUN pip install -r requirements.txt",
+		"RUN pip list",
+		"EXPOSE 5000",
+		"CMD [\"gunicorn\", \"-b\", \"0.0.0.0:5000\", \"app:app\"]"
+    ]
+}
