@@ -37,7 +37,7 @@ def get_page(base_url):
 
 def get_all_links(html):
     bs = soup(html)
-    links = bs.findAll('a')
+    links = bs.findAll('a', href=True)
     return links
 
 
